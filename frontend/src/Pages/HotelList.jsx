@@ -15,41 +15,29 @@ function HotelList() {
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-
   const hotelsPerPage = 2;
-
-  // Reset pagination when search or filters change
   useEffect(() => {
     setCurrentPage(1);
   }, [search, minPrice, maxPrice]);
-
-  // Fetch hotels from backend
   useEffect(() => {
     dispatch(fetchHotels());
   }, [dispatch]);
-
-  // Search and price filtering
   const filteredHotels = hotels.filter((hotel) => {
     const matchesSearch = hotel.title
       .toLowerCase()
       .includes(search.toLowerCase());
-
     const matchesMinPrice =
       minPrice === "" ||
       Number(hotel.price) >= Number(minPrice);
-
     const matchesMaxPrice =
       maxPrice === "" ||
       Number(hotel.price) <= Number(maxPrice);
-
     return (
       matchesSearch &&
       matchesMinPrice &&
       matchesMaxPrice
     );
   });
-
-  // Pagination calculations
   const indexOfLastHotel =
     currentPage * hotelsPerPage;
 
@@ -60,34 +48,25 @@ function HotelList() {
     indexOfFirstHotel,
     indexOfLastHotel
   );
-
   const totalPages = Math.ceil(
     filteredHotels.length / hotelsPerPage
   );
-
   return (
     <div className="hotel-page">
-
       <Helmet>
         <title>StayFinder | Explore Stays</title>
-
         <meta
           name="description"
           content="Discover comfortable stays and find the perfect hotel for your next trip."
         />
       </Helmet>
-
-      {/* Header */}
       <div className="page-header">
-
         <div>
           <h1>Explore Stays</h1>
-
           <p>
             Find a place you'll love to stay.
           </p>
         </div>
-
         <Link
           to="/add"
           className="add-hotel-btn"
@@ -98,8 +77,6 @@ function HotelList() {
         </Link>
 
       </div>
-
-      {/* Search and Filters */}
       <div className="filters">
 
         <input
@@ -130,8 +107,6 @@ function HotelList() {
         />
 
       </div>
-
-      {/* Section Heading */}
       <div className="section-heading">
 
         <div>
@@ -147,35 +122,26 @@ function HotelList() {
         </div>
 
       </div>
-
-      {/* Hotel Cards */}
       {currentHotels.length > 0 ? (
         <div className="hotel-grid">
-
           {currentHotels.map((hotel) => (
             <HotelCard
               key={hotel.id}
               hotel={hotel}
             />
           ))}
-
         </div>
       ) : (
         <div className="no-hotels">
-
           <h3>No stays found</h3>
-
           <p>
             Try changing your search or price range.
           </p>
 
         </div>
       )}
-
-      {/* Pagination */}
       {totalPages > 1 && (
         <div className="pagination">
-
           <button
             type="button"
             onClick={() =>

@@ -9,22 +9,17 @@ import {
   Marker,
   Popup,
 } from "react-leaflet";
-
 import "leaflet/dist/leaflet.css";
 
 function HotelDetails() {
   const { id } = useParams();
 
   const [userLocation, setUserLocation] = useState(null);
-
-  // Get hotel from Redux
   const hotel = useSelector((state) =>
     state.hotels.hotels.find(
       (hotel) => hotel.id === Number(id)
     )
   );
-
-  // Get user's current location
   useEffect(() => {
     if (!navigator.geolocation) {
       return;
@@ -42,8 +37,6 @@ function HotelDetails() {
       }
     );
   }, []);
-
-  // Hotel not found
   if (!hotel) {
     return (
       <div className="hotel-page">
@@ -70,14 +63,10 @@ function HotelDetails() {
       </div>
     );
   }
-
-  // Hotel coordinates
   const hotelLocation = [
     Number(hotel.latitude),
     Number(hotel.longitude),
   ];
-
-  // Hotel image URL
   const imageUrl = hotel.image.startsWith("http")
     ? hotel.image
     : `http://localhost:5000${hotel.image}`;
@@ -96,66 +85,46 @@ function HotelDetails() {
         />
       </Helmet>
 
-      {/* Back Navigation */}
       <Link
         to="/"
         className="back-link"
       >
         ← Back to Explore
       </Link>
-
-      {/* Hotel Details */}
       <div className="details-card">
-
         <img
           src={imageUrl}
           alt={hotel.title}
           className="details-image"
         />
-
         <div className="details-content">
-
           <p className="details-label">
             YOUR STAY
           </p>
-
           <h1>{hotel.title}</h1>
-
           <div className="details-price">
             ₹{hotel.price}
             <span> / night</span>
           </div>
-
           <p className="details-description">
             {hotel.description}
           </p>
-
-          {/* Hotel Coordinates */}
           <div className="location-info">
-
             <div>
               <span>Latitude</span>
-
               <strong>
                 {hotel.latitude}
               </strong>
             </div>
-
             <div>
               <span>Longitude</span>
-
               <strong>
                 {hotel.longitude}
               </strong>
             </div>
-
           </div>
-
         </div>
-
       </div>
-
-      {/* Location Section */}
       <div className="map-section">
 
         <div className="map-heading">
@@ -173,27 +142,20 @@ function HotelDetails() {
           </p>
 
         </div>
-
-        {/* Map */}
         <MapContainer
           center={hotelLocation}
           zoom={13}
           className="hotel-map"
         >
-
           <TileLayer
             attribution="&copy; OpenStreetMap contributors"
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-
-          {/* Hotel Location */}
           <Marker position={hotelLocation}>
             <Popup>
               {hotel.title}
             </Popup>
           </Marker>
-
-          {/* User Current Location */}
           {userLocation && (
             <Marker position={userLocation}>
               <Popup>
@@ -201,7 +163,6 @@ function HotelDetails() {
               </Popup>
             </Marker>
           )}
-
         </MapContainer>
 
       </div>
@@ -210,4 +171,4 @@ function HotelDetails() {
   );
 }
 
-export default HotelDetails;
+export default HotelDetails;ts 

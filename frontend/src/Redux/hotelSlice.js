@@ -1,14 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-
-// ===============================
-// FETCH HOTELS
-// ===============================
-
+const API_URL = "https://hotel-crud-backend-zori.onrender.com/api/hotels";
 export const fetchHotels = createAsyncThunk(
   "hotels/fetchHotels",
   async () => {
     const response = await fetch(
-      "http://localhost:5000/api/hotels"
+      `${API_URL}`
     );
 
     if (!response.ok) {
@@ -20,16 +16,11 @@ export const fetchHotels = createAsyncThunk(
     return data.hotels;
   }
 );
-
-// ===============================
-// CREATE HOTEL
-// ===============================
-
 export const createHotel = createAsyncThunk(
   "hotels/createHotel",
   async (formData) => {
     const response = await fetch(
-      "http://localhost:5000/api/hotels",
+      `${API_URL}`,
       {
         method: "POST",
         body: formData,
@@ -45,16 +36,11 @@ export const createHotel = createAsyncThunk(
     return data.hotel;
   }
 );
-
-// ===============================
-// UPDATE HOTEL
-// ===============================
-
 export const updateHotel = createAsyncThunk(
   "hotels/updateHotel",
   async ({ id, formData }) => {
     const response = await fetch(
-      `http://localhost:5000/api/hotels/${id}`,
+      `${API_URL}/${id}`,
       {
         method: "PUT",
         body: formData,
@@ -70,16 +56,11 @@ export const updateHotel = createAsyncThunk(
     return data.hotel;
   }
 );
-
-// ===============================
-// DELETE HOTEL
-// ===============================
-
 export const deleteHotel = createAsyncThunk(
   "hotels/deleteHotel",
   async (id) => {
     const response = await fetch(
-      `http://localhost:5000/api/hotels/${id}`,
+      `${API_URL}/${id}`,
       {
         method: "DELETE",
       }
@@ -92,19 +73,9 @@ export const deleteHotel = createAsyncThunk(
     return id;
   }
 );
-
-// ===============================
-// INITIAL STATE
-// ===============================
-
 const initialState = {
   hotels: [],
 };
-
-// ===============================
-// HOTEL SLICE
-// ===============================
-
 const hotelSlice = createSlice({
   name: "hotels",
 
@@ -113,38 +84,29 @@ const hotelSlice = createSlice({
   reducers: {},
 
   extraReducers: (builder) => {
-
-    // GET success
     builder.addCase(
       fetchHotels.fulfilled,
       (state, action) => {
         state.hotels = action.payload;
       }
     );
-
-    // POST success
     builder.addCase(
       createHotel.fulfilled,
       (state, action) => {
         state.hotels.unshift(action.payload);
       }
     );
-
-    // PUT success
     builder.addCase(
       updateHotel.fulfilled,
       (state, action) => {
         const index = state.hotels.findIndex(
           (hotel) => hotel.id === action.payload.id
         );
-
         if (index !== -1) {
           state.hotels[index] = action.payload;
         }
       }
     );
-
-    // DELETE success
     builder.addCase(
       deleteHotel.fulfilled,
       (state, action) => {
@@ -155,9 +117,4 @@ const hotelSlice = createSlice({
     );
   },
 });
-
-// ===============================
-// EXPORT REDUCER
-// ===============================
-
 export default hotelSlice.reducer;

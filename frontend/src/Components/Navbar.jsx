@@ -6,13 +6,9 @@ function Navbar() {
   return (
     <header className="navbar">
       <div className="navbar-inner">
-
-        {/* Brand */}
         <Link to="/" className="brand">
           StayFinder
         </Link>
-
-        {/* Navigation */}
         <nav className="nav-links">
           <Link
             to="/"

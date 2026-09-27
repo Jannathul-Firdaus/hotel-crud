@@ -10,24 +10,15 @@ body {
   background: #f5f7fb;
   color: #1f2937;
 }
-
-/* Main App Container */
-
 #root {
   min-height: 100vh;
 }
-
-/* Page Layout */
-
 .hotel-page {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   padding: 40px 24px;
 }
-
-/* Header */
-
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -47,9 +38,6 @@ body {
   color: #6b7280;
   font-size: 15px;
 }
-
-/* Add Button */
-
 .add-hotel-btn {
   text-decoration: none;
 }
@@ -71,7 +59,6 @@ body {
   transform: translateY(-1px);
 }
 
-/* Search & Filters */
 
 .filters {
   display: grid;
@@ -100,17 +87,11 @@ body {
   background: white;
   box-shadow: 0 0 0 3px rgba(156, 163, 175, 0.15);
 }
-
-/* Hotel Grid */
-
 .hotel-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
 }
-
-/* Hotel Card */
-
 .hotel-card {
   background: white;
   border-radius: 18px;
@@ -124,9 +105,6 @@ body {
   transform: translateY(-4px);
   box-shadow: 0 12px 30px rgba(15, 23, 42, 0.11);
 }
-
-/* Hotel Image */
-
 .hotel-card-image-link {
   display: block;
   text-decoration: none;
@@ -138,8 +116,6 @@ body {
   object-fit: cover;
   display: block;
 }
-
-/* Card Content */
 
 .hotel-card-content {
   padding: 20px;
@@ -168,9 +144,6 @@ body {
   color: #111827;
   margin-bottom: 18px;
 }
-
-/* Card Buttons */
-
 .hotel-actions {
   display: flex;
   gap: 10px;
@@ -203,8 +176,6 @@ body {
   background: #374151;
 }
 
-/* Pagination */
-
 .pagination {
   display: flex;
   justify-content: center;
@@ -233,8 +204,6 @@ body {
   font-weight: 600;
 }
 
-/* No Hotels */
-
 .no-hotels {
   text-align: center;
   padding: 60px 20px;
@@ -242,9 +211,6 @@ body {
   background: white;
   border-radius: 16px;
 }
-
-/* Responsive */
-
 @media (max-width: 768px) {
   .hotel-page {
     padding: 25px 16px;
@@ -655,8 +621,6 @@ body {
 .nav-add-btn:hover {
   background: #374151;
 }
-
-/* Mobile */
 @media (max-width: 480px) {
 
   .navbar-inner {
