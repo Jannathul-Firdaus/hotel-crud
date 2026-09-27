@@ -171,4 +171,4 @@ function HotelDetails() {
   );
 }
 
-export default HotelDetails;ts 
+export default HotelDetails;

@@ -7,10 +7,6 @@ const pool = require("../db");
 
 const router = express.Router();
 
-// ===============================
-// IMAGE UPLOAD SETTINGS
-// ===============================
-
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/");
@@ -28,10 +24,6 @@ const upload = multer({
   storage,
 });
 
-// ===============================
-// POST - CREATE HOTEL
-// ===============================
-
 router.post(
   "/",
   upload.single("image"),
@@ -45,7 +37,7 @@ router.post(
         price,
       } = req.body;
 
-      // Validation
+  
       if (
         !title ||
         !description ||
@@ -70,11 +62,9 @@ router.post(
         });
       }
 
-      // Image path stored in database
       const imagePath =
         `/uploads/${req.file.filename}`;
 
-      // Insert hotel
       const query = `
         INSERT INTO hotels
         (
@@ -120,10 +110,6 @@ router.post(
   }
 );
 
-// ===============================
-// GET - FETCH HOTELS
-// Search + Price Filter + Pagination
-// ===============================
 
 router.get("/", async (req, res) => {
   try {
@@ -144,7 +130,6 @@ router.get("/", async (req, res) => {
     const values = [];
     let parameterIndex = 1;
 
-    // Search by title
     if (title) {
       query += `
         AND title ILIKE $${parameterIndex}
@@ -154,7 +139,6 @@ router.get("/", async (req, res) => {
       parameterIndex++;
     }
 
-    // Minimum price
     if (minPrice) {
       query += `
         AND price >= $${parameterIndex}
@@ -164,7 +148,6 @@ router.get("/", async (req, res) => {
       parameterIndex++;
     }
 
-    // Maximum price
     if (maxPrice) {
       query += `
         AND price <= $${parameterIndex}
@@ -174,7 +157,6 @@ router.get("/", async (req, res) => {
       parameterIndex++;
     }
 
-    // Pagination
     query += `
       ORDER BY id DESC
       LIMIT $${parameterIndex}
@@ -206,9 +188,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-// ===============================
-// PUT - UPDATE HOTEL
-// ===============================
 
 router.put(
   "/:id",
@@ -224,8 +203,6 @@ router.put(
         longitude,
         price,
       } = req.body;
-
-      // Validation
       if (
         !title ||
         !description ||
@@ -244,7 +221,6 @@ router.put(
         });
       }
 
-      // Check whether hotel exists
       const existingHotel =
         await pool.query(
           "SELECT * FROM hotels WHERE id = $1",
@@ -260,15 +236,12 @@ router.put(
       const oldImage =
         existingHotel.rows[0].image;
 
-      // Keep old image by default
       let imagePath = oldImage;
 
-      // Use new image if uploaded
       if (req.file) {
         imagePath =
           `/uploads/${req.file.filename}`;
 
-        // Delete old local image
         if (oldImage?.startsWith("/uploads/")) {
           const oldImagePath = path.join(
             __dirname,
@@ -282,7 +255,6 @@ router.put(
         }
       }
 
-      // Update hotel
       const query = `
         UPDATE hotels
         SET
@@ -328,15 +300,11 @@ router.put(
   }
 );
 
-// ===============================
-// DELETE - DELETE HOTEL
-// ===============================
-
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Find hotel
+  
     const existingHotel =
       await pool.query(
         "SELECT * FROM hotels WHERE id = $1",
@@ -350,8 +318,6 @@ router.delete("/:id", async (req, res) => {
     }
 
     const hotel = existingHotel.rows[0];
-
-    // Delete local image
     if (
       hotel.image &&
       hotel.image.startsWith("/uploads/")
@@ -366,8 +332,6 @@ router.delete("/:id", async (req, res) => {
         fs.unlinkSync(imagePath);
       }
     }
-
-    // Delete hotel from database
     await pool.query(
       "DELETE FROM hotels WHERE id = $1",
       [id]
