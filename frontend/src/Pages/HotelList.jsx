@@ -19,9 +19,9 @@ function HotelList() {
   useEffect(() => {
     setCurrentPage(1);
   }, [search, minPrice, maxPrice]);
-  useEffect(() => {
-    dispatch(fetchHotels());
-  }, [dispatch]);
+ useEffect(() => {
+  dispatch(fetchHotels());
+}, []);
   const filteredHotels = hotels.filter((hotel) => {
     const matchesSearch = hotel.title
       .toLowerCase()

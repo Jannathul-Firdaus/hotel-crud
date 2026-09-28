@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createHotel, updateHotel } from "../Redux/hotelSlice";
+import {
+  createHotel,
+  updateHotel,
+  fetchHotels,
+} from "../Redux/hotelSlice";
 import { Helmet } from "react-helmet-async";
 import { useParams, useNavigate } from "react-router-dom";
 
@@ -15,6 +19,7 @@ function HotelForm() {
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
   const [price, setPrice] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
   const hotel = useSelector((state) =>
     state.hotels.hotels.find(
@@ -28,7 +33,7 @@ function HotelForm() {
       setImagePreview(
         hotel.image.startsWith("http")
           ? hotel.image
-          : `http://localhost:5000${hotel.image}`
+          : `https://hotel-crud-backend-zori.onrender.com${hotel.image}`
       );
       setTitle(hotel.title);
       setDescription(hotel.description);
@@ -37,52 +42,85 @@ function HotelForm() {
       setPrice(hotel.price);
     }
   }, [hotel]);
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const newErrors = {};
-    if (!title.trim()) {
-      newErrors.title = "Title is required";
-    }
-    if (!description.trim()) {
-      newErrors.description = "Description is required";
-    }
-    if (!id && !image) {
-      newErrors.image = "Image is required";
-    }
-    if (!latitude) {
-      newErrors.latitude = "Latitude is required";
-    }
-    if (!longitude) {
-      newErrors.longitude = "Longitude is required";
-    }
-    if (!price || Number(price) <= 0) {
-      newErrors.price = "Price must be greater than 0";
-    }
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length > 0) {
-      return;
-    }
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("description", description);
-    formData.append("latitude", latitude);
-    formData.append("longitude", longitude);
-    formData.append("price", price);
-    if (image instanceof File) {
-      formData.append("image", image);
-    }
-    if (id) {
-      dispatch(
-        updateHotel({
-          id: Number(id),
-          formData,
-        })
-      );
-    } else {
-      dispatch(createHotel(formData));
-    }
-    navigate("/");
-  };
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+if (isSubmitting) {
+  return;
+}
+
+setIsSubmitting(true);
+  const newErrors = {};
+
+  if (!title.trim()) {
+    newErrors.title = "Title is required";
+  }
+
+  if (!description.trim()) {
+    newErrors.description = "Description is required";
+  }
+
+  if (!id && !image) {
+    newErrors.image = "Image is required";
+  }
+
+  if (!latitude) {
+    newErrors.latitude = "Latitude is required";
+  }
+
+  if (!longitude) {
+    newErrors.longitude = "Longitude is required";
+  }
+
+  if (!price || Number(price) <= 0) {
+    newErrors.price = "Price must be greater than 0";
+  }
+
+  setErrors(newErrors);
+
+  if (Object.keys(newErrors).length > 0) {
+  setIsSubmitting(false);
+  return;
+}
+
+  const formData = new FormData();
+
+  formData.append("title", title);
+  formData.append("description", description);
+  formData.append("latitude", latitude);
+  formData.append("longitude", longitude);
+  formData.append("price", price);
+
+  if (image instanceof File) {
+    formData.append("image", image);
+  }
+
+  try {
+   if (id) {
+  await dispatch(
+    updateHotel({
+      id: Number(id),
+      formData,
+    })
+  ).unwrap();
+
+  alert("Hotel updated successfully!");
+} else {
+  await dispatch(createHotel(formData)).unwrap();
+
+  // Get the latest hotels from the backend
+  await dispatch(fetchHotels()).unwrap();
+
+  alert("Hotel added successfully!");
+}
+
+navigate("/");
+  } catch (error) {
+  console.error("Hotel save error:", error);
+  alert("Failed to save hotel. Please try again.");
+} finally {
+  setIsSubmitting(false);
+}
+};
   return (
     <div className="hotel-page">
       <Helmet>
@@ -227,11 +265,16 @@ function HotelForm() {
             )}
           </div>
           <button
-            type="submit"
-            className="save-hotel-btn"
-          >
-            {id ? "Update Hotel" : "Save Hotel"}
-          </button>
+  type="submit"
+  className="save-hotel-btn"
+  disabled={isSubmitting}
+>
+  {isSubmitting
+    ? "Saving..."
+    : id
+    ? "Update Hotel"
+    : "Save Hotel"}
+</button>
         </form>
       </div>
     </div>
