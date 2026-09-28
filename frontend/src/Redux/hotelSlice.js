@@ -4,7 +4,7 @@ export const fetchHotels = createAsyncThunk(
   "hotels/fetchHotels",
   async () => {
     const response = await fetch(
-      `${API_URL}`
+      `${API_URL}?limit=100`
     );
 
     if (!response.ok) {
