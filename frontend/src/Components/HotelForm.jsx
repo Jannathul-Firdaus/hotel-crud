@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   createHotel,
   updateHotel,
-  fetchHotels,
 } from "../Redux/hotelSlice";
 import { Helmet } from "react-helmet-async";
 import { useParams, useNavigate } from "react-router-dom";
@@ -12,6 +11,7 @@ function HotelForm() {
   const dispatch = useDispatch();
   const { id } = useParams();
   const navigate = useNavigate();
+
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
   const [title, setTitle] = useState("");
@@ -21,11 +21,13 @@ function HotelForm() {
   const [price, setPrice] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
+
   const hotel = useSelector((state) =>
     state.hotels.hotels.find(
       (hotel) => hotel.id === Number(id)
     )
   );
+
   useEffect(() => {
     if (hotel) {
       setImage(hotel.image);
@@ -33,8 +35,9 @@ function HotelForm() {
       setImagePreview(
         hotel.image.startsWith("http")
           ? hotel.image
-          : `https://hotel-crud-backend-zori.onrender.com${hotel.image}`
+          : `https://hotel-crud-production.up.railway.app${hotel.image}`
       );
+
       setTitle(hotel.title);
       setDescription(hotel.description);
       setLatitude(hotel.latitude);
@@ -42,91 +45,95 @@ function HotelForm() {
       setPrice(hotel.price);
     }
   }, [hotel]);
- const handleSubmit = async (e) => {
-  e.preventDefault();
-if (isSubmitting) {
-  return;
-}
 
-setIsSubmitting(true);
-  const newErrors = {};
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (!title.trim()) {
-    newErrors.title = "Title is required";
-  }
+    if (isSubmitting) {
+      return;
+    }
 
-  if (!description.trim()) {
-    newErrors.description = "Description is required";
-  }
+    setIsSubmitting(true);
 
-  if (!id && !image) {
-    newErrors.image = "Image is required";
-  }
+    const newErrors = {};
 
-  if (!latitude) {
-    newErrors.latitude = "Latitude is required";
-  }
+    if (!title.trim()) {
+      newErrors.title = "Title is required";
+    }
 
-  if (!longitude) {
-    newErrors.longitude = "Longitude is required";
-  }
+    if (!description.trim()) {
+      newErrors.description = "Description is required";
+    }
 
-  if (!price || Number(price) <= 0) {
-    newErrors.price = "Price must be greater than 0";
-  }
+    if (!id && !image) {
+      newErrors.image = "Image is required";
+    }
 
-  setErrors(newErrors);
+    if (!latitude) {
+      newErrors.latitude = "Latitude is required";
+    }
 
-  if (Object.keys(newErrors).length > 0) {
-  setIsSubmitting(false);
-  return;
-}
+    if (!longitude) {
+      newErrors.longitude = "Longitude is required";
+    }
 
-  const formData = new FormData();
+    if (!price || Number(price) <= 0) {
+      newErrors.price = "Price must be greater than 0";
+    }
 
-  formData.append("title", title);
-  formData.append("description", description);
-  formData.append("latitude", latitude);
-  formData.append("longitude", longitude);
-  formData.append("price", price);
+    setErrors(newErrors);
 
-  if (image instanceof File) {
-    formData.append("image", image);
-  }
+    if (Object.keys(newErrors).length > 0) {
+      setIsSubmitting(false);
+      return;
+    }
 
-  try {
-   if (id) {
-  await dispatch(
-    updateHotel({
-      id: Number(id),
-      formData,
-    })
-  ).unwrap();
+    const formData = new FormData();
 
-  alert("Hotel updated successfully!");
-} else {
-  await dispatch(createHotel(formData)).unwrap();
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("latitude", latitude);
+    formData.append("longitude", longitude);
+    formData.append("price", price);
 
-  // Get the latest hotels from the backend
-  await dispatch(fetchHotels()).unwrap();
+    if (image instanceof File) {
+      formData.append("image", image);
+    }
 
-  alert("Hotel added successfully!");
-}
+    try {
+      if (id) {
+        await dispatch(
+          updateHotel({
+            id: Number(id),
+            formData,
+          })
+        ).unwrap();
 
-navigate("/");
-  } catch (error) {
-  console.error("Hotel save error:", error);
-  alert("Failed to save hotel. Please try again.");
-} finally {
-  setIsSubmitting(false);
-}
-};
+        alert("Hotel updated successfully!");
+      } else {
+        await dispatch(
+          createHotel(formData)
+        ).unwrap();
+
+        alert("Hotel added successfully!");
+      }
+
+      navigate("/");
+    } catch (error) {
+      console.error("Hotel save error:", error);
+      alert("Failed to save hotel. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="hotel-page">
       <Helmet>
         <title>
           {id ? "Edit Hotel" : "Add Hotel"}
         </title>
+
         <meta
           name="description"
           content={
@@ -136,11 +143,13 @@ navigate("/");
           }
         />
       </Helmet>
+
       <div className="form-header">
         <div>
           <h1>
             {id ? "Edit Hotel" : "Add Hotel"}
           </h1>
+
           <p>
             {id
               ? "Update your hotel information"
@@ -148,15 +157,18 @@ navigate("/");
           </p>
         </div>
       </div>
+
       <div className="form-card">
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Hotel Image</label>
+
             <input
               type="file"
               accept="image/*"
               onChange={(e) => {
                 const file = e.target.files[0];
+
                 if (file) {
                   setImage(file);
                   setImagePreview(
@@ -165,14 +177,17 @@ navigate("/");
                 }
               }}
             />
+
             {errors.image && (
               <p className="error-message">
                 {errors.image}
               </p>
             )}
+
             {imagePreview && (
               <div className="image-preview">
                 <p>Image Preview</p>
+
                 <img
                   src={imagePreview}
                   alt="Hotel preview"
@@ -180,8 +195,10 @@ navigate("/");
               </div>
             )}
           </div>
+
           <div className="form-group">
             <label>Hotel Title</label>
+
             <input
               type="text"
               placeholder="Enter hotel name"
@@ -190,14 +207,17 @@ navigate("/");
                 setTitle(e.target.value)
               }
             />
+
             {errors.title && (
               <p className="error-message">
                 {errors.title}
               </p>
             )}
           </div>
+
           <div className="form-group">
             <label>Description</label>
+
             <textarea
               placeholder="Enter hotel description"
               value={description}
@@ -206,15 +226,18 @@ navigate("/");
               }
               rows="5"
             />
+
             {errors.description && (
               <p className="error-message">
                 {errors.description}
               </p>
             )}
           </div>
+
           <div className="location-fields">
             <div className="form-group">
               <label>Latitude</label>
+
               <input
                 type="number"
                 step="any"
@@ -224,14 +247,17 @@ navigate("/");
                   setLatitude(e.target.value)
                 }
               />
+
               {errors.latitude && (
                 <p className="error-message">
                   {errors.latitude}
                 </p>
               )}
             </div>
+
             <div className="form-group">
               <label>Longitude</label>
+
               <input
                 type="number"
                 step="any"
@@ -241,6 +267,7 @@ navigate("/");
                   setLongitude(e.target.value)
                 }
               />
+
               {errors.longitude && (
                 <p className="error-message">
                   {errors.longitude}
@@ -248,8 +275,10 @@ navigate("/");
               )}
             </div>
           </div>
+
           <div className="form-group">
             <label>Price per Night</label>
+
             <input
               type="number"
               placeholder="Enter price"
@@ -258,23 +287,25 @@ navigate("/");
                 setPrice(e.target.value)
               }
             />
+
             {errors.price && (
               <p className="error-message">
                 {errors.price}
               </p>
             )}
           </div>
+
           <button
-  type="submit"
-  className="save-hotel-btn"
-  disabled={isSubmitting}
->
-  {isSubmitting
-    ? "Saving..."
-    : id
-    ? "Update Hotel"
-    : "Save Hotel"}
-</button>
+            type="submit"
+            className="save-hotel-btn"
+            disabled={isSubmitting}
+          >
+            {isSubmitting
+              ? "Saving..."
+              : id
+              ? "Update Hotel"
+              : "Save Hotel"}
+          </button>
         </form>
       </div>
     </div>
