@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-const API_URL = "https://hotel-crud-backend-zori.onrender.com/api/hotels";
+const API_URL = "https://hotel-crud-production.up.railway.app/api/hotels";
 export const fetchHotels = createAsyncThunk(
   "hotels/fetchHotels",
   async () => {

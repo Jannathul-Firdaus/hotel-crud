@@ -4,12 +4,19 @@ const fs = require("fs");
 const path = require("path");
 
 const pool = require("../db");
-
 const router = express.Router();
+
+const uploadDir =
+  process.env.UPLOAD_DIR ||
+  path.join(__dirname, "..", "uploads");
+
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/");
+    cb(null, uploadDir);
   },
 
   filename: (req, file, cb) => {
@@ -243,16 +250,15 @@ router.put(
           `/uploads/${req.file.filename}`;
 
         if (oldImage?.startsWith("/uploads/")) {
-          const oldImagePath = path.join(
-            __dirname,
-            "..",
-            oldImage
-          );
+  const oldImagePath = path.join(
+    uploadDir,
+    path.basename(oldImage)
+  );
 
-          if (fs.existsSync(oldImagePath)) {
-            fs.unlinkSync(oldImagePath);
-          }
-        }
+  if (fs.existsSync(oldImagePath)) {
+    fs.unlinkSync(oldImagePath);
+  }
+}
       }
 
       const query = `
@@ -319,19 +325,18 @@ router.delete("/:id", async (req, res) => {
 
     const hotel = existingHotel.rows[0];
     if (
-      hotel.image &&
-      hotel.image.startsWith("/uploads/")
-    ) {
-      const imagePath = path.join(
-        __dirname,
-        "..",
-        hotel.image
-      );
+  hotel.image &&
+  hotel.image.startsWith("/uploads/")
+) {
+  const imagePath = path.join(
+    uploadDir,
+    path.basename(hotel.image)
+  );
 
-      if (fs.existsSync(imagePath)) {
-        fs.unlinkSync(imagePath);
-      }
-    }
+  if (fs.existsSync(imagePath)) {
+    fs.unlinkSync(imagePath);
+  }
+}
     await pool.query(
       "DELETE FROM hotels WHERE id = $1",
       [id]

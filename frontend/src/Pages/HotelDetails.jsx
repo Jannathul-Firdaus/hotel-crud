@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -87,21 +86,15 @@ function HotelDetails() {
     Number(hotel.longitude),
   ];
 
-  const imageUrl = hotel.image.includes("localhost:5000")
-    ? `https://hotel-crud-backend-zori.onrender.com${hotel.image.replace(
-        "http://localhost:5000",
-        ""
-      )}`
-    : hotel.image.startsWith("http")
+  const imageUrl = hotel.image.startsWith("http")
     ? hotel.image
-    : `https://hotel-crud-backend-zori.onrender.com${hotel.image}`;
+    : `https://hotel-crud-production.up.railway.app${hotel.image}`;
 
   console.log("Hotel image:", hotel.image);
   console.log("Image URL:", imageUrl);
 
   return (
     <div className="hotel-page">
-
       <Helmet>
         <title>
           {hotel.title} | StayFinder
@@ -121,7 +114,6 @@ function HotelDetails() {
       </Link>
 
       <div className="details-card">
-
         <img
           src={imageUrl}
           alt={hotel.title}
@@ -129,7 +121,6 @@ function HotelDetails() {
         />
 
         <div className="details-content">
-
           <p className="details-label">
             YOUR STAY
           </p>
@@ -146,7 +137,6 @@ function HotelDetails() {
           </p>
 
           <div className="location-info">
-
             <div>
               <span>Latitude</span>
               <strong>
@@ -160,16 +150,12 @@ function HotelDetails() {
                 {hotel.longitude}
               </strong>
             </div>
-
           </div>
-
         </div>
       </div>
 
       <div className="map-section">
-
         <div className="map-heading">
-
           <p className="details-label">
             LOCATION
           </p>
@@ -181,7 +167,6 @@ function HotelDetails() {
           <p>
             Discover where your stay is located.
           </p>
-
         </div>
 
         <MapContainer
@@ -189,7 +174,6 @@ function HotelDetails() {
           zoom={13}
           className="hotel-map"
         >
-
           <TileLayer
             attribution="&copy; OpenStreetMap contributors"
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -208,11 +192,8 @@ function HotelDetails() {
               </Popup>
             </Marker>
           )}
-
         </MapContainer>
-
       </div>
-
     </div>
   );
 }

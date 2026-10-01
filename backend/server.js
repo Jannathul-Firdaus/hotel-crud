@@ -9,28 +9,23 @@ const hotelRoutes = require("./routes/hotelRoutes");
 
 const app = express();
 
-// ===============================
-// MIDDLEWARE
-// ===============================
 
 app.use(cors());
 app.use(express.json());
 
-// Serve uploaded hotel images
+
+const uploadDir =
+  process.env.UPLOAD_DIR ||
+  path.join(__dirname, "uploads");
+
 app.use(
   "/uploads",
-  express.static(path.join(__dirname, "uploads"))
+  express.static(uploadDir)
 );
 
-// ===============================
-// HOTEL ROUTES
-// ===============================
 
 app.use("/api/hotels", hotelRoutes);
 
-// ===============================
-// DATABASE CONNECTION TEST
-// ===============================
 
 app.get("/", async (req, res) => {
   try {
@@ -50,9 +45,7 @@ app.get("/", async (req, res) => {
   }
 });
 
-// ===============================
-// START SERVER
-// ===============================
+
 
 const PORT = process.env.PORT || 5000;
 
