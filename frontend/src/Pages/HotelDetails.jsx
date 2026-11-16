@@ -86,9 +86,9 @@ function HotelDetails() {
     Number(hotel.longitude),
   ];
 
-  const imageUrl = hotel.image.startsWith("http")
-    ? hotel.image
-    : `https://hotel-crud-production.up.railway.app${hotel.image}`;
+  const imageUrl = hotel.image?.startsWith("http")
+  ? hotel.image
+  : `http://localhost:5000${hotel.image}`;
 
   console.log("Hotel image:", hotel.image);
   console.log("Image URL:", imageUrl);

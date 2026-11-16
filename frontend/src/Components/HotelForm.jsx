@@ -33,10 +33,10 @@ function HotelForm() {
       setImage(hotel.image);
 
       setImagePreview(
-        hotel.image.startsWith("http")
-          ? hotel.image
-          : `https://hotel-crud-production.up.railway.app${hotel.image}`
-      );
+  hotel.image?.startsWith("http")
+    ? hotel.image
+    : `http://localhost:5000${hotel.image}`
+);
 
       setTitle(hotel.title);
       setDescription(hotel.description);

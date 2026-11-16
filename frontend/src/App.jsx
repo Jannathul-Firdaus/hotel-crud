@@ -7,7 +7,7 @@ import HotelList from "./Pages/HotelList";
 import HotelDetails from "./Pages/HotelDetails";
 
 function App() {
-  return (
+  return (     
     <BrowserRouter>
       <Navbar />
       <Routes>
